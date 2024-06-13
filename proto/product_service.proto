@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package product_service;
+
+service ProductService {
+  rpc GetProduct (GetProductRequest) returns (GetProductResponse) {}
+  rpc SearchProducts (SearchProductsRequest) returns (SearchProductsResponse) {}
+  rpc UpdateInventory (UpdateInventoryRequest) returns (UpdateInventoryResponse) {}
+}
+
+message GetProductRequest {
+  int32 product_id = 1;
+}
+
+message GetProductResponse {
+  int32 product_id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  int32 quantity = 5;
+}
+
+message SearchProductsRequest {
+  string query = 1;
+}
+
+message SearchProductsResponse {
+  repeated GetProductResponse products = 1;
+}
+
+message UpdateInventoryRequest {
+  int32 product_id = 1;
+  int32 quantity = 2;
+}
+
+message UpdateInventoryResponse {
+  bool success = 1;
+}
