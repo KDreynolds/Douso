@@ -1,8 +1,8 @@
 import grpc
 from concurrent import futures
 import sys
-import user_service_pb2
-import user_service_pb2_grpc
+import product_service_pb2
+import product_service_pb2_grpc
 
 class ProductServicer(product_service_pb2_grpc.ProductServiceServicer):
     def GetProduct(self, request, context):
