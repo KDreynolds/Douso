@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: user-service:latest
+        image: kylereynoldsdev/devops_work:user-service
         ports:
         - containerPort: 50051
 ---

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: order-service
-        image: order-service:latest
+        image: kylereynoldsdev/devops_work:order-service
         ports:
         - containerPort: 50053
 ---

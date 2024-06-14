@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: product-service
-        image: product-service:latest
+        image: kylereynoldsdev/devops_work:product-service
         ports:
         - containerPort: 50052
 ---
