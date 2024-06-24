@@ -10,6 +10,7 @@ import product_service_pb2_grpc
 import time
 import random
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 
@@ -86,6 +87,7 @@ def create_dummy_order():
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     order_service_pb2_grpc.add_OrderServiceServicer_to_server(OrderServicer(), server)
+    port = int(os.environ.get("PORT", 50053))
     server.add_insecure_port('0.0.0.0:50053')
     server.start()
     print("Order Service started on port 50053")

@@ -5,6 +5,7 @@ import user_service_pb2
 import user_service_pb2_grpc
 import time
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 
@@ -51,6 +52,7 @@ class UserServicer(user_service_pb2_grpc.UserServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     user_service_pb2_grpc.add_UserServiceServicer_to_server(UserServicer(), server)
+    port = int(os.environ.get("PORT", 50051))
     server.add_insecure_port('0.0.0.0:50051')
     server.start()
     print("User Service started on port 50051")

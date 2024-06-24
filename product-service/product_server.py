@@ -5,6 +5,7 @@ import product_service_pb2
 import product_service_pb2_grpc
 import time
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 
@@ -58,6 +59,7 @@ class ProductServicer(product_service_pb2_grpc.ProductServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     product_service_pb2_grpc.add_ProductServiceServicer_to_server(ProductServicer(), server)
+    port = int(os.environ.get("PORT", 50052))
     server.add_insecure_port('0.0.0.0:50052')
     server.start()
     print("Product Service started on port 50052")

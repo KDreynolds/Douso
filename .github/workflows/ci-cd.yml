@@ -1,0 +1,77 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run tests
+      run: python -m unittest discover tests
+    
+    - name: Build Docker images
+      run: |
+        docker build -t user-service ./user-service
+        docker build -t product-service ./product-service
+        docker build -t order-service ./order-service
+    
+    - name: Run Docker Compose
+      run: docker-compose up -d
+    
+    - name: Wait for services to start
+      run: sleep 10s
+    
+    - name: Test running services
+      run: |
+        curl http://localhost:50051
+        curl http://localhost:50052
+        curl http://localhost:50053
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Deploy User Service to Staging
+      run: |
+        curl -X POST https://api.heroku.com/apps/douso-user-service-staging/builds \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/vnd.heroku+json; version=3" \
+        -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+        -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
+
+    - name: Deploy Product Service to Staging
+      run: |
+        curl -X POST https://api.heroku.com/apps/douso-product-service-staging/builds \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/vnd.heroku+json; version=3" \
+        -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+        -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
+
+    - name: Deploy Order Service to Staging
+      run: |
+        curl -X POST https://api.heroku.com/apps/douso-order-service-staging/builds \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/vnd.heroku+json; version=3" \
+        -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
+        -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
