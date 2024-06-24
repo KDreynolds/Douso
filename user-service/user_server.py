@@ -6,6 +6,10 @@ import user_service_pb2_grpc
 import time
 import logging
 import os
+from concurrent import futures
+import http.server
+import socketserver
+import threading
 
 logging.basicConfig(level=logging.INFO)
 
@@ -49,13 +53,32 @@ class UserServicer(user_service_pb2_grpc.UserServiceServicer):
         else:
             context.abort(grpc.StatusCode.NOT_FOUND, f"User with ID {user_id} not found")
 
+class HealthCheckHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Service is running')
+
+def serve_http(port):
+    with socketserver.TCPServer(("", port), HealthCheckHandler) as httpd:
+        print(f"Serving health check on port {port}")
+        httpd.serve_forever()
+
 def serve():
+    grpc_port = int(os.environ.get("GRPC_PORT", 50051)) 
+    http_port = int(os.environ.get("PORT", 8080))  
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     user_service_pb2_grpc.add_UserServiceServicer_to_server(UserServicer(), server)
-    port = int(os.environ.get("PORT", 50051))
-    server.add_insecure_port('0.0.0.0:50051')
+    server.add_insecure_port(f'[::]:{grpc_port}')
+    
+    print(f"Starting gRPC server on port {grpc_port}")
     server.start()
-    print("User Service started on port 50051")
+    
+    print(f"Starting HTTP server for health checks on port {http_port}")
+    http_thread = threading.Thread(target=serve_http, args=(http_port,))
+    http_thread.start()
+    
     server.wait_for_termination()
 
 if __name__ == '__main__':
