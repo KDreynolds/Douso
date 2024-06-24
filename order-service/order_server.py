@@ -27,7 +27,7 @@ class OrderServicer(order_service_pb2_grpc.OrderServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     order_service_pb2_grpc.add_OrderServiceServicer_to_server(OrderServicer(), server)
-    server.add_insecure_port('[::]:50053')
+    server.add_insecure_port('0.0.0.0:50053')
     server.start()
     server.wait_for_termination()
 

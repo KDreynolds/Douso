@@ -33,7 +33,7 @@ class ProductServicer(product_service_pb2_grpc.ProductServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     product_service_pb2_grpc.add_ProductServiceServicer_to_server(ProductServicer(), server)
-    server.add_insecure_port('[::]:50052')
+    server.add_insecure_port('0.0.0.0:50052')
     server.start()
     server.wait_for_termination()
 
