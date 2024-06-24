@@ -1,1 +1,1 @@
-web: python order_server.py
+web: GRPC_PORT=50053 python order_server_server.py

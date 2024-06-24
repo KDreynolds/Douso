@@ -1,1 +1,1 @@
-web: python product_server.py
+web: GRPC_PORT=50052 python product_server_server.py

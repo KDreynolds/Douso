@@ -38,11 +38,9 @@ jobs:
     - name: Wait for services to start
       run: sleep 10s
     
-    # - name: Test running services
-    #   run: |
-    #     curl http://localhost:50051
-    #     curl http://localhost:50052
-    #     curl http://localhost:50053
+   - name: Test running services
+      run: |
+        curl http://localhost:8080
 
   deploy:
     needs: build-and-test

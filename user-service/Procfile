@@ -1,1 +1,1 @@
-web: python user_server.py
+web: GRPC_PORT=50051 python user_server.py
