@@ -36,7 +36,7 @@ jobs:
       run: docker-compose up -d
     
     - name: Wait for services to start
-      run: sleep 10s
+      run: sleep 10000s
     
     - name: Test running services
       run: |
