@@ -14,3 +14,6 @@ services:
     build: ./order-service
     ports:
       - "50053:50053"
+    depends_on:
+      - user-service
+      - product-service

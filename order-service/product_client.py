@@ -4,7 +4,7 @@ import product_service_pb2
 import product_service_pb2_grpc
 
 def get_product(product_id):
-    with grpc.insecure_channel('localhost:50052') as channel:
+    with grpc.insecure_channel('product-service:50052') as channel:
         stub = product_service_pb2_grpc.ProductServiceStub(channel)
         response = stub.GetProduct(product_service_pb2.GetProductRequest(product_id=product_id))
         return response

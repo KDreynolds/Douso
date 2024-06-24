@@ -1,12 +1,11 @@
 import grpc
-import sys
-import order_service_pb2
-import order_service_pb2_grpc
+import product_service_pb2
+import product_service_pb2_grpc
 
 def update_inventory(product_id, quantity):
-    with grpc.insecure_channel('localhost:50053') as channel:
-        stub = order_service_pb2_grpc.OrderServiceStub(channel)
-        response = stub.UpdateInventory(order_service_pb2.UpdateInventoryRequest(product_id=product_id, quantity=quantity))
+    with grpc.insecure_channel('product-service:50052') as channel:
+        stub = product_service_pb2_grpc.ProductServiceStub(channel)
+        response = stub.UpdateInventory(product_service_pb2.UpdateInventoryRequest(product_id=product_id, quantity=quantity))
         return response.success
 
 # Example usage
