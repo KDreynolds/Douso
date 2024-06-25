@@ -60,7 +60,7 @@ class HealthCheckHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(b'Service is running')
 
 def serve_http(port):
-    with socketserver.TCPServer(("", port), HealthCheckHandler) as httpd:
+    with socketserver.TCPServer(("0.0.0.0", port), HealthCheckHandler) as httpd:
         print(f"Serving health check on port {port}")
         httpd.serve_forever()
 

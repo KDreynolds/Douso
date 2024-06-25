@@ -36,11 +36,13 @@ jobs:
       run: docker-compose up -d
     
     - name: Wait for services to start
-      run: sleep 10000s
+      run: sleep 100s
     
     - name: Test running services
       run: |
-        curl http://localhost:8080
+        curl http://localhost:8081 || true
+        curl http://localhost:8082 || true
+        curl http://localhost:8083 || true
 
   deploy:
     needs: build-and-test

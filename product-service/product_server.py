@@ -68,10 +68,11 @@ class HealthCheckHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def serve_http(port):
-    with socketserver.TCPServer(("", port), HealthCheckHandler) as httpd:
+    with socketserver.TCPServer(("0.0.0.0", port), HealthCheckHandler) as httpd:
         print(f"Serving health check on port {port}")
         httpd.serve_forever()
 
+        
 def serve():
     grpc_port = int(os.environ.get("GRPC_PORT", 50052))  
     http_port = int(os.environ.get("PORT", 8080)) 

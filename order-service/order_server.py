@@ -57,8 +57,8 @@ class OrderServicer(order_service_pb2_grpc.OrderServiceServicer):
             context.abort(grpc.StatusCode.NOT_FOUND, f"Order with ID {order_id} not found")
 
 def create_dummy_order():
-    with grpc.insecure_channel('user-service:50051') as user_channel, \
-         grpc.insecure_channel('product-service:50052') as product_channel:
+    with grpc.insecure_channel('localhost:50051') as user_channel, \
+         grpc.insecure_channel('localhost:50052') as product_channel:
         user_stub = user_service_pb2_grpc.UserServiceStub(user_channel)
         product_stub = product_service_pb2_grpc.ProductServiceStub(product_channel)
 
@@ -96,7 +96,7 @@ class HealthCheckHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def serve_http(port):
-    with socketserver.TCPServer(("", port), HealthCheckHandler) as httpd:
+    with socketserver.TCPServer(("0.0.0.0", port), HealthCheckHandler) as httpd:
         print(f"Serving health check on port {port}")
         httpd.serve_forever()
 
