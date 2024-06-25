@@ -74,6 +74,7 @@ def serve_http(port):
 
         
 def serve():
+    logging.info("Product Service is starting...")
     grpc_port = int(os.environ.get("GRPC_PORT", 50052))  
     http_port = int(os.environ.get("PORT", 8080)) 
 

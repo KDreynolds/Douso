@@ -8,6 +8,11 @@ services:
     environment:
       - GRPC_PORT=50051
       - PORT=8080
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   product-service:
     build: ./product-service
@@ -17,6 +22,11 @@ services:
     environment:
       - GRPC_PORT=50052
       - PORT=8080
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   order-service:
     build: ./order-service
@@ -29,3 +39,8 @@ services:
     depends_on:
       - user-service
       - product-service
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"

@@ -57,8 +57,8 @@ class OrderServicer(order_service_pb2_grpc.OrderServiceServicer):
             context.abort(grpc.StatusCode.NOT_FOUND, f"Order with ID {order_id} not found")
 
 def create_dummy_order():
-    with grpc.insecure_channel('localhost:50051') as user_channel, \
-         grpc.insecure_channel('localhost:50052') as product_channel:
+    with grpc.insecure_channel('user-service:50051') as user_channel, \
+         grpc.insecure_channel('product-service:50052') as product_channel:
         user_stub = user_service_pb2_grpc.UserServiceStub(user_channel)
         product_stub = product_service_pb2_grpc.ProductServiceStub(product_channel)
 
@@ -88,6 +88,12 @@ def create_dummy_order():
             else:
                 print(f"An error occurred: {e}")
 
+
+def create_dummy_orders():
+    while True:
+        create_dummy_order()
+        time.sleep(10)
+
 class HealthCheckHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -101,6 +107,7 @@ def serve_http(port):
         httpd.serve_forever()
 
 def serve():
+    logging.info("Order Service is starting...")
     grpc_port = int(os.environ.get("GRPC_PORT", 50053))  
     http_port = int(os.environ.get("PORT", 8080))  
 
@@ -114,6 +121,9 @@ def serve():
     print(f"Starting HTTP server for health checks on port {http_port}")
     http_thread = threading.Thread(target=serve_http, args=(http_port,))
     http_thread.start()
+
+    dummy_order_thread = threading.Thread(target=create_dummy_orders)
+    dummy_order_thread.start()
     
     server.wait_for_termination()
 

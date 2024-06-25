@@ -65,6 +65,7 @@ def serve_http(port):
         httpd.serve_forever()
 
 def serve():
+    logging.info("User Service is starting...")
     grpc_port = int(os.environ.get("GRPC_PORT", 50051)) 
     http_port = int(os.environ.get("PORT", 8080))  
 
