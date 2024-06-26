@@ -95,6 +95,3 @@ jobs:
       run: |
         sentry-cli --log-level=debug releases finalize $SENTRY_RELEASE
         sentry-cli --log-level=debug releases deploys $SENTRY_RELEASE new -e staging
-
-    - name: Debug Sentry Release
-      run: echo "Sentry Release: $SENTRY_RELEASE"
