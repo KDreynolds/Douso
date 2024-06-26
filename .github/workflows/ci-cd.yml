@@ -96,7 +96,7 @@ jobs:
     - name: Finalize Sentry release
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        SENTRY_ORG: HoTMiXer
+        SENTRY_ORG: hotmixer
         SENTRY_PROJECT: douso
       run: |
         sentry-cli --log-level=debug releases finalize $SENTRY_RELEASE
