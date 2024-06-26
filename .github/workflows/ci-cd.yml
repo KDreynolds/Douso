@@ -58,10 +58,11 @@ jobs:
         SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       run: |
+        curl -sL https://sentry.io/get-cli/ | bash
         SENTRY_RELEASE=$(sentry-cli releases propose-version)
         echo "SENTRY_RELEASE=$SENTRY_RELEASE" >> $GITHUB_ENV
         sentry-cli --log-level=debug releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
-        sentry-cli --log-level=debug releases set-commits --auto $SENTRY_RELEASE
+        sentry-cli --log-level=debug releases set-commits --auto --ignore-missing $SENTRY_RELEASE
 
     - name: Deploy User Service to Staging
       run: |
