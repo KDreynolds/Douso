@@ -52,14 +52,15 @@ jobs:
     - name: Create Sentry release
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        SENTRY_ORG: your-organization-name
-        SENTRY_PROJECT: your-project-name
+        SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       run: |
         curl -sL https://sentry.io/get-cli/ | bash
         export SENTRY_RELEASE=$(sentry-cli releases propose-version)
-        sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
-        sentry-cli releases set-commits --auto $SENTRY_RELEASE
-        sentry-cli releases finalize $SENTRY_RELEASE
+        sentry-cli --log-level=debug releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
+        sentry-cli --log-level=debug releases set-commits --auto $SENTRY_RELEASE
+        sentry-cli --log-level=debug releases finalize $SENTRY_RELEASE
+
 
     - name: Deploy User Service to Staging
       run: |
