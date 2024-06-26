@@ -58,7 +58,12 @@ jobs:
         SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       run: |
-        curl -sL https://sentry.io/get-cli/ | bash
+        # Install or update Sentry CLI
+        curl -sL https://sentry.io/get-cli/ | bash || true
+        
+        # Ensure Sentry CLI is in the PATH
+        export PATH=$PATH:/usr/local/bin
+        
         SENTRY_RELEASE=$(sentry-cli releases propose-version)
         echo "SENTRY_RELEASE=$SENTRY_RELEASE" >> $GITHUB_ENV
         sentry-cli --log-level=debug releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
