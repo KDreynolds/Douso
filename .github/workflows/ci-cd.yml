@@ -23,9 +23,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    # - name: Run tests
-    #   run: python -m unittest discover tests
-    
     - name: Build Docker images
       run: |
         docker build -t user-service ./user-service
@@ -52,6 +49,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Create Sentry release
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: your-organization-name
+        SENTRY_PROJECT: your-project-name
+      run: |
+        curl -sL https://sentry.io/get-cli/ | bash
+        export SENTRY_RELEASE=$(sentry-cli releases propose-version)
+        sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
+        sentry-cli releases set-commits --auto $SENTRY_RELEASE
+        sentry-cli releases finalize $SENTRY_RELEASE
+
     - name: Deploy User Service to Staging
       run: |
         curl -X POST https://api.heroku.com/apps/douso-user-service-staging/builds \
@@ -75,3 +84,12 @@ jobs:
         -H "Accept: application/vnd.heroku+json; version=3" \
         -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
         -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
+
+    - name: Finalize Sentry release
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: HoTMiXer
+        SENTRY_PROJECT: douso
+      run: |
+        sentry-cli releases finalize $SENTRY_RELEASE
+        sentry-cli releases deploys $SENTRY_RELEASE new -e staging
