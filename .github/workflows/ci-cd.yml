@@ -24,11 +24,11 @@ jobs:
         pip install -r requirements.txt
         pip install pytest grpcio grpcio-tools
 
-    - name: Generate gRPC code
-      run: |
-        python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. order_service/order_service.proto
-        python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. product_service/product_service.proto
-        python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. user_service/user_service.proto
+    # - name: Generate gRPC code
+    #   run: |
+    #     python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. order_service/order_service.proto
+    #     python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. product_service/product_service.proto
+    #     python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. user_service/user_service.proto
 
     - name: Run unit tests
       run: |
