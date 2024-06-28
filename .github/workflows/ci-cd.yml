@@ -22,6 +22,18 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pytest grpcio grpcio-tools
+
+    - name: Generate gRPC code
+      run: |
+        python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. order-service/order_service.proto
+        python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. product-service/product_service.proto
+        python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. user-service/user_service.proto
+
+    - name: Run unit tests
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        pytest tests/test_order_service.py tests/test_product_service.py tests/test_user_service.py
     
     - name: Build Docker images
       run: |
@@ -58,12 +70,7 @@ jobs:
         SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       run: |
-        # Install or update Sentry CLI
-        curl -sL https://sentry.io/get-cli/ | bash || true
-        
-        # Ensure Sentry CLI is in the PATH
         export PATH=$PATH:/usr/local/bin
-        
         SENTRY_RELEASE=$(sentry-cli releases propose-version)
         echo "SENTRY_RELEASE=$SENTRY_RELEASE" >> $GITHUB_ENV
         sentry-cli --log-level=debug releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
@@ -96,8 +103,8 @@ jobs:
     - name: Finalize Sentry release
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        SENTRY_ORG: hotmixer
-        SENTRY_PROJECT: douso
+        SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       run: |
         sentry-cli --log-level=debug releases finalize $SENTRY_RELEASE
         sentry-cli --log-level=debug releases deploys $SENTRY_RELEASE new -e staging

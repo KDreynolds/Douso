@@ -1,7 +1,7 @@
 version: '3'
 services:
   user-service:
-    build: ./user-service
+    build: ./user_service
     ports:
       - "50051:50051"
       - "8081:8080"
@@ -15,7 +15,7 @@ services:
         max-file: "10"
 
   product-service:
-    build: ./product-service
+    build: ./product_service
     ports:
       - "50052:50052"
       - "8082:8080"
@@ -29,7 +29,7 @@ services:
         max-file: "10"
 
   order-service:
-    build: ./order-service
+    build: ./order_service
     ports:
       - "50053:50053"
       - "8083:8080"
