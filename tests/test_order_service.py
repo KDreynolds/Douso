@@ -66,6 +66,7 @@ def test_get_order_status_not_found(order_servicer):
         order_servicer.GetOrderStatus(request, context)
     
     assert excinfo.value.code() == grpc.StatusCode.NOT_FOUND
+    context.abort.assert_called_once_with(grpc.StatusCode.NOT_FOUND, "Order with ID 999 not found")
 
 def test_cancel_order(order_servicer):
     # Create an order
@@ -96,3 +97,4 @@ def test_cancel_order_not_found(order_servicer):
         order_servicer.CancelOrder(request, context)
     
     assert excinfo.value.code() == grpc.StatusCode.NOT_FOUND
+    context.abort.assert_called_once_with(grpc.StatusCode.NOT_FOUND, "Order with ID 999 not found")
