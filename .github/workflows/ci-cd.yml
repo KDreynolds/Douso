@@ -37,9 +37,9 @@ jobs:
     
     - name: Build Docker images
       run: |
-        docker build -t user-service ./user-service
-        docker build -t product-service ./product-service
-        docker build -t order-service ./order-service
+        docker build -t user-service ./user_service
+        docker build -t product-service ./product_service
+        docker build -t order-service ./order_service
     
     - name: Run Docker Compose
       run: docker-compose up -d
