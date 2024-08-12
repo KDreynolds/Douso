@@ -76,29 +76,22 @@ jobs:
         sentry-cli --log-level=debug releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
         sentry-cli --log-level=debug releases set-commits --auto --ignore-missing $SENTRY_RELEASE
 
-    - name: Deploy User Service to Staging
-      run: |
-        curl -X POST https://api.heroku.com/apps/douso-user-service-staging/builds \
-        -H "Content-Type: application/json" \
-        -H "Accept: application/vnd.heroku+json; version=3" \
-        -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
-        -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
+    - name: Setup Pulumi
+      uses: pulumi/setup-pulumi@v2
 
-    - name: Deploy Product Service to Staging
+    - name: Configure Pulumi
       run: |
-        curl -X POST https://api.heroku.com/apps/douso-product-service-staging/builds \
-        -H "Content-Type: application/json" \
-        -H "Accept: application/vnd.heroku+json; version=3" \
-        -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
-        -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
+        pulumi login
+        pulumi stack select dev -c
+      env:
+        PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-    - name: Deploy Order Service to Staging
+    - name: Deploy with Pulumi
       run: |
-        curl -X POST https://api.heroku.com/apps/douso-order-service-staging/builds \
-        -H "Content-Type: application/json" \
-        -H "Accept: application/vnd.heroku+json; version=3" \
-        -H "Authorization: Bearer ${{ secrets.HEROKU_API_KEY }}" \
-        -d '{"source_blob":{"url":"https://github.com/KDreynolds/Douso/archive/main.tar.gz", "version": "${{ github.sha }}"}}'
+        cd pulumi
+        pulumi up --yes
+      env:
+        PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
     - name: Finalize Sentry release
       env:
@@ -107,4 +100,4 @@ jobs:
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       run: |
         sentry-cli --log-level=debug releases finalize $SENTRY_RELEASE
-        sentry-cli --log-level=debug releases deploys $SENTRY_RELEASE new -e staging
+        sentry-cli --log-level=debug releases deploys $SENTRY_RELEASE new -e production

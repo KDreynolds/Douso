@@ -1,0 +1,11 @@
+name: douso
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
+description: test program
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: kubernetes-python
